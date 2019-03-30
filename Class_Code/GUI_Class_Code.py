@@ -132,11 +132,35 @@ class GUI_Framework_Code(Frame):
         self.numberOfSecondsForBreakComboBox.grid(row=0, column=0, sticky="nsew")
 
     def getUpdateButton(self):
-        pass
+        # temp for spacing
+        temp = Frame(self.FrameForSettings, width=55, height=40)
+        temp.grid(row=4, column=4)
+        # Draw Update Button
+        self.updateButtonFrame = Frame(self.FrameForSettings, width=110, height=40)
+        self.updateButtonFrame.grid(row=4, column=5, columnspan=2)
+        self.updateButtonFrame.grid_propagate(False)
+        self.updateButtonFrame.rowconfigure(0, weight=1)
+        self.updateButtonFrame.columnconfigure(0, weight=1)
+        self.updateButtonButton = Button(self.updateButtonFrame, text="Update and Start")
+        self.updateButtonButton.grid(row=0, column=0, sticky="nsew")
 
     def getPauseandResetButtons(self):
-        pass
-
+        # Draw for pause Button
+        self.pauseButtonFrame = Frame(self.FrameForSettings, width=110, height=40)
+        self.pauseButtonFrame.grid(row=4, column=0, columnspan=2)
+        self.pauseButtonFrame.grid_propagate(False)
+        self.pauseButtonFrame.rowconfigure(0, weight=1)
+        self.pauseButtonFrame.columnconfigure(0, weight=1)
+        self.pauseButtonButton = Button(self.pauseButtonFrame, text="Pause")
+        self.pauseButtonButton.grid(row=0, column=0, sticky="nsew")
+        # Draw for Reset Button
+        self.resetButtonFrame = Frame(self.FrameForSettings, width=110, height=40)
+        self.resetButtonFrame.grid(row=4, column=2, columnspan=2)
+        self.resetButtonFrame.grid_propagate(False)
+        self.resetButtonFrame.rowconfigure(0, weight=1)
+        self.resetButtonFrame.columnconfigure(0, weight=1)
+        self.resetButtonButton = Button(self.resetButtonFrame, text="Reset")
+        self.resetButtonButton.grid(row=0, column=0, sticky="nsew")
 
 root = Tk()
 root.geometry("450x360")
