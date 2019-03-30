@@ -64,6 +64,25 @@ class GUI_Framework_Code(Frame):
         self.numberOfPomodoroSessionsFrame.columnconfigure(0, weight=1)
         self.numberOfPomodoroSessionsComboBox = ttk.Combobox(self.numberOfPomodoroSessionsFrame)
         self.numberOfPomodoroSessionsComboBox.grid(row=0, column=0, sticky="nsew")
+        # temp frame for in between the two settings
+        temp = Frame(self.FrameForSettings, height=40, width=55)
+        temp.grid(row=0, column=2)
+        # No. of minutes for pomodoro
+        self.numberOfMinutesForPomodoroLabelframe = LabelFrame(self.FrameForSettings, width=110, height=40)
+        self.numberOfMinutesForPomodoroLabelframe.grid(row=0, column=3, columnspan=2)
+        self.numberOfMinutesForPomodoroLabelframe.grid_propagate(False)
+        self.numberOfMinutesForPomodoroLabelframe.rowconfigure(0, weight=1)
+        self.numberOfMinutesForPomodoroLabelframe.columnconfigure(0, weight=1)
+        self.numberOfMinutesForPomodoroLabel = Label(self.numberOfMinutesForPomodoroLabelframe, text="Number of minutes\nfor Pomodoro")
+        self.numberOfMinutesForPomodoroLabel.grid(row=0, column=0, sticky="nsew")
+        # Draw ComboBox for number of Minutes
+        self.numberOfMinutesForPomodoroFrame = Frame(self.FrameForSettings, width=110, height=40)
+        self.numberOfMinutesForPomodoroFrame.grid(row=1, column=3, columnspan=2)
+        self.numberOfMinutesForPomodoroFrame.grid_propagate(False)
+        self.numberOfMinutesForPomodoroFrame.rowconfigure(0, weight=1)
+        self.numberOfMinutesForPomodoroFrame.columnconfigure(0, weight=1)
+        self.numberOfMinutesForPomodoroComboBox = ttk.Combobox(self.numberOfMinutesForPomodoroFrame)
+        self.numberOfMinutesForPomodoroComboBox.grid(row=0, column=0, sticky="nsew")
     def getBreakSettings(self):
         pass
 
