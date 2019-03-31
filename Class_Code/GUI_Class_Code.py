@@ -38,6 +38,7 @@ class GUI_Framework_Code(Frame):
         self.TimerLabel = Label(self.TimerLabelframe, text="00:00", font=("Courier", 44))
         self.TimerLabel.grid(row=0, column=0, sticky="nsew")
 
+    # Draws the frame for the labels and comboboxes widgets. (Break and pomodoro settings)
     def getFrameForSettings(self):
         self.FrameForSettings = Frame(self, width=450, height=240)
         self.FrameForSettings.grid(row=3, column=0, rowspan=6, columnspan=9)
@@ -177,7 +178,7 @@ class GUI_Framework_Code(Frame):
         self.resetButtonButton = Button(self.resetButtonFrame, text="Reset")
         self.resetButtonButton.grid(row=0, column=0, sticky="nsew")
 
-root = Tk()
-root.geometry("450x360")
-GUI_Framework_Code(root)
-root.mainloop()
+# root = Tk()
+# root.geometry("450x360")
+# GUI_Framework_Code(root)
+# root.mainloop()
