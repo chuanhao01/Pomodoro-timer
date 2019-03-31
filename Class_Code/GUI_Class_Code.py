@@ -64,6 +64,9 @@ class GUI_Framework_Code(Frame):
         self.numberOfPomodoroSessionsFrame.columnconfigure(0, weight=1)
         self.numberOfPomodoroSessionsComboBox = ttk.Combobox(self.numberOfPomodoroSessionsFrame)
         self.numberOfPomodoroSessionsComboBox.grid(row=0, column=0, sticky="nsew")
+        # Setting default values
+        self.pomodoroSessionsValues = [1, 2, 3, 4, 5, 6, 7, 8]
+        self.numberOfPomodoroSessionsComboBox.config(values=self.pomodoroSessionsValues)
         # No. of minutes for pomodoro
         self.numberOfMinutesForPomodoroLabelframe = LabelFrame(self.FrameForSettings, width=110, height=40)
         self.numberOfMinutesForPomodoroLabelframe.grid(row=0, column=2, columnspan=2)
@@ -80,6 +83,9 @@ class GUI_Framework_Code(Frame):
         self.numberOfMinutesForPomodoroFrame.columnconfigure(0, weight=1)
         self.numberOfMinutesForPomodoroComboBox = ttk.Combobox(self.numberOfMinutesForPomodoroFrame)
         self.numberOfMinutesForPomodoroComboBox.grid(row=0, column=0, sticky="nsew")
+        # Setting default values
+        self.numberOfMinutesForPomodoroValues = [25,30,45]
+        self.numberOfMinutesForPomodoroComboBox.config(values=self.numberOfMinutesForPomodoroValues)
         # Draw number of seconds for pomodoro
         self.numberOfSecondsForPomodoroLabelframe = LabelFrame(self.FrameForSettings, width=110, height=40)
         self.numberOfSecondsForPomodoroLabelframe.grid(row=0, column=4, columnspan=2)
@@ -96,6 +102,9 @@ class GUI_Framework_Code(Frame):
         self.numberOfSecondsForPomodoroFrame.columnconfigure(0, weight=1)
         self.numberOfSecondsForPomodoroComboBox = ttk.Combobox(self.numberOfSecondsForPomodoroFrame)
         self.numberOfSecondsForPomodoroComboBox.grid(row=0, column=0, sticky="nsew")
+        # Setting default values
+        self.numberOfSecondsForPomodoroValues = [0,30,60]
+        self.numberOfSecondsForPomodoroComboBox.config(values=self.numberOfSecondsForPomodoroValues)
 
     def getBreakSettings(self):
         # Draw Number of Minutes for Break Label
@@ -114,6 +123,9 @@ class GUI_Framework_Code(Frame):
         self.numberOfMinutesForBreakFrame.columnconfigure(0, weight=1)
         self.numberOfMinutesForBreakComboBox = ttk.Combobox(self.numberOfMinutesForBreakFrame)
         self.numberOfMinutesForBreakComboBox.grid(row=0, column=0, sticky="nsew")
+        # Setting default values
+        self.numberOfMinutesForBreakValues = [4,5,10,15]
+        self.numberOfMinutesForBreakComboBox.config(values=self.numberOfMinutesForBreakValues)
         # Draw Number of Seconds for Break Label
         self.numberOfSecondsForBreakLabelframe = LabelFrame(self.FrameForSettings, width=110, height=40)
         self.numberOfSecondsForBreakLabelframe.grid(row=2, column=2, columnspan=2)
@@ -130,6 +142,9 @@ class GUI_Framework_Code(Frame):
         self.numberOfSecondsForBreakFrame.columnconfigure(0, weight=1)
         self.numberOfSecondsForBreakComboBox = ttk.Combobox(self.numberOfSecondsForBreakFrame)
         self.numberOfSecondsForBreakComboBox.grid(row=0, column=0, sticky="nsew")
+        # Setting Default values
+        self.numberOfSecondsForBreakValues = [0,30,60]
+        self.numberOfSecondsForBreakComboBox.config(values=self.numberOfSecondsForBreakValues)
 
     def getUpdateButton(self):
         # temp for spacing
