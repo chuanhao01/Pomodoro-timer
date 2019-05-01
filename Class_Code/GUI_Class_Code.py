@@ -93,7 +93,7 @@ class GUI_Framework_Code(Frame):
         self.numberOfSecondsForPomodoroLabelframe.grid_propagate(False)
         self.numberOfSecondsForPomodoroLabelframe.rowconfigure(0, weight=1)
         self.numberOfSecondsForPomodoroLabelframe.columnconfigure(0, weight=1)
-        self.numberOfSecondsForPomodoroLabel = Label(self.numberOfSecondsForPomodoroLabelframe, text="Number of minutes\nfor Pomodoro")
+        self.numberOfSecondsForPomodoroLabel = Label(self.numberOfSecondsForPomodoroLabelframe, text="Number of Seconds\nfor Pomodoro")
         self.numberOfSecondsForPomodoroLabel.grid(row=0, column=0, sticky="nsew")
         # Draw number of seconds for pomodoro Combobox
         self.numberOfSecondsForPomodoroFrame = Frame(self.FrameForSettings, width=110, height=40)
@@ -114,7 +114,7 @@ class GUI_Framework_Code(Frame):
         self.numberOfMinutesForBreakLabelframe.grid_propagate(False)
         self.numberOfMinutesForBreakLabelframe.rowconfigure(0, weight=1)
         self.numberOfMinutesForBreakLabelframe.columnconfigure(0, weight=1)
-        self.numberOfMinutesForBreakLabel = Label(self.numberOfMinutesForBreakLabelframe, text="Number of minutes\nfor Pomodoro")
+        self.numberOfMinutesForBreakLabel = Label(self.numberOfMinutesForBreakLabelframe, text="Number of minutes\nfor Break")
         self.numberOfMinutesForBreakLabel.grid(row=0, column=0, sticky="nsew")
         # Draw Number Of Minutes for Break Combobox
         self.numberOfMinutesForBreakFrame = Frame(self.FrameForSettings, width=110, height=40)
