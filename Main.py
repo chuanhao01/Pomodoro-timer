@@ -17,10 +17,71 @@ class PomodoroTimer(GUI_Framework_Code):
         GUI_Framework_Code.__init__(self, master)
         self.updateButtonButton.config(command=lambda :self.getUpdateAndStart())
         self.valuesList = 0
+        self.checkPause = True
+        self.checkRest = True
+
+    # Method for updating time by 1s
+    def updateTimePerS(self, valuesList, selector):
+        if (selector == "Timer"):
+            selector = 1
+        elif(selector == "Rest"):
+            selector = 2
+        valuesList[selector][1] -= 1
+        return valuesList
+
+
+    # method for rest
+    def restTimer(self, valuesList):
+        checkPause = True
+        checkRest = True
+        while(checkPause):
+            while(checkRest):
+                checkPause = self.checkPause
+                checkRest = self.checkRest
+                valuesList = self.checkTimeRemaining(valuesList, "Rest")
+                valuesList = self.updateTimePerS(valuesList, "Rest")
+                print("Hi2")
+                self.after(1000)
+            return
+
+
+    # method to check if time has depleted
+    def checkTimeRemaining(self, valuesList, selector):
+        if (selector == "Timer"):
+            selector = 1
+        elif(selector == "Rest"):
+            selector = 2
+        #   if time is depleted reset and check if its
+        if (valuesList[selector] == [0,0]):
+            valuesList[selector] = self.valuesList[selector]
+            if (selector == 1):
+                valuesList[0] -= 1
+                self.restTimer(valuesList)
+            elif (selector == 2):
+                self.checkRest = False
+            return valuesList
+        elif(valuesList[selector][1] == 0):
+            valuesList[selector][0] -= 1
+            valuesList[selector][1] = 60
+            return valuesList
+        else:
+            return valuesList
+
+
 
     # method called to start promodoro timer
     def startTimer(self, valuesList):
-        
+        checkPause = True
+        # checks is pause button has been pressed
+        while(checkPause):
+            # if the number of sessions is larger than 0 i.e. there are more session
+            while(valuesList[0]>0):
+                checkPause = self.checkPause
+                valuesList = self.checkTimeRemaining(valuesList, "Timer")
+                valuesList = self.updateTimePerS(valuesList, "Timer")
+                print("Hi1")
+                self.after(1000)
+            return
 
     # Method called when update and start button is pressed
     def getUpdateAndStart(self):
