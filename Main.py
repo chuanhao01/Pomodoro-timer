@@ -3,16 +3,24 @@ from Class_Code.GUI_Class_Code import GUI_Framework_Code
 from tkinter import *
 from win10toast import ToastNotifier
 
+# Notes for code below,
+# For the list return after the button is pressed, [0] refers to number of sessions, [1] list of time per session
+# [2] list of time per rest
+# Problems with the code ATM:
+# IDK how to implement reset button
+
+
+
 # Declaring classes
 class PomodoroTimer(GUI_Framework_Code):
     def __init__(self, master=None):
         GUI_Framework_Code.__init__(self, master)
         self.updateButtonButton.config(command=lambda :self.getUpdateAndStart())
+        self.valuesList = 0
 
-    def convertMinuteintoSeconds(self, minutes):
-        secondsToReturn = minutes * 60
-        return secondsToReturn
-
+    # method called to start promodoro timer
+    def startTimer(self, valuesList):
+        
 
     # Method called when update and start button is pressed
     def getUpdateAndStart(self):
@@ -20,6 +28,8 @@ class PomodoroTimer(GUI_Framework_Code):
         if valuesList == []:
             return
         print(valuesList)
+        self.valuesList = valuesList
+        self.startTimer(valuesList)
 
 
 
@@ -76,6 +86,8 @@ class PomodoroTimer(GUI_Framework_Code):
     # Update to timer label to show error code 2 message(Wrong variable type for input/ input not integers)
     def errorCode2TimerLabelUpdate(self):
         self.TimerLabel.config(text="There are some fields which are\nnot integers when configuring the\npomodoro timer", font=("Courier",9))
+
+
 
 root = Tk()
 root.geometry("450x360")
