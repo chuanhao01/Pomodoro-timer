@@ -20,68 +20,41 @@ class PomodoroTimer(GUI_Framework_Code):
         self.checkPause = True
         self.checkRest = True
 
-    # Method for updating time by 1s
-    def updateTimePerS(self, valuesList, selector):
-        if (selector == "Timer"):
-            selector = 1
-        elif(selector == "Rest"):
-            selector = 2
-        valuesList[selector][1] -= 1
-        return valuesList
-
-
-    # method for rest
-    def restTimer(self, valuesList):
-        checkPause = True
-        checkRest = True
-        while(checkPause):
-            while(checkRest):
-                checkPause = self.checkPause
-                checkRest = self.checkRest
-                valuesList = self.checkTimeRemaining(valuesList, "Rest")
-                valuesList = self.updateTimePerS(valuesList, "Rest")
-                print("Hi2")
-                self.after(1000)
-            return
-
-
-    # method to check if time has depleted
-    def checkTimeRemaining(self, valuesList, selector):
-        if (selector == "Timer"):
-            selector = 1
-        elif(selector == "Rest"):
-            selector = 2
-        #   if time is depleted reset and check if its
-        if (valuesList[selector] == [0,0]):
-            valuesList[selector] = self.valuesList[selector]
-            if (selector == 1):
-                valuesList[0] -= 1
-                self.restTimer(valuesList)
-            elif (selector == 2):
-                self.checkRest = False
-            return valuesList
-        elif(valuesList[selector][1] == 0):
-            valuesList[selector][0] -= 1
-            valuesList[selector][1] = 60
-            return valuesList
+    # method to check time and update time
+    def updateTime(self, time):
+        if (time[1] == 0):
+            time[0] -= 1
+            time[1] = 59
+            return time
         else:
-            return valuesList
+            time[1] -= 1
+            return time
 
 
+    # method to call to check when time of timer is up
+    def checkTimer(self):
+        if (self.valuesList[0] == 0):
+            # call done func, for now not implemented yet
+            print('I\'m DONEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
+        else:
+            self.valuesList[0] -= 1
 
-    # method called to start promodoro timer
-    def startTimer(self, valuesList):
-        checkPause = True
-        # checks is pause button has been pressed
-        while(checkPause):
-            # if the number of sessions is larger than 0 i.e. there are more session
-            while(valuesList[0]>0):
-                checkPause = self.checkPause
-                valuesList = self.checkTimeRemaining(valuesList, "Timer")
-                valuesList = self.updateTimePerS(valuesList, "Timer")
-                print("Hi1")
-                self.after(1000)
-            return
+
+    # method for timerfunc, takes an array of time and counts down
+    def timerFunc(self, time, type):
+        if self.checkPause:
+            if(time == [0,0]):
+                if(type == "Timer"):
+                    self.checkTimer()
+                    self.timerFunc(self.valuesList[2], "Rest")
+                elif(type == "Rest"):
+                    self.timerFunc(self.valuesList[1], "Timer")
+            else:
+                time = self.updateTime(time)
+                print("After 1s?", time, self.valuesList[1])
+                self.after(1000, lambda :self.timerFunc(time, type))
+
+
 
     # Method called when update and start button is pressed
     def getUpdateAndStart(self):
@@ -89,8 +62,8 @@ class PomodoroTimer(GUI_Framework_Code):
         if valuesList == []:
             return
         print(valuesList)
-        self.valuesList = valuesList
-        self.startTimer(valuesList)
+        self.valuesList = (valuesList)
+        self.timerFunc(self.valuesList[1], "Timer")
 
 
 
