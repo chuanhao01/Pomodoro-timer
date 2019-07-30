@@ -32,8 +32,75 @@
             <div class="col-lg-1 d-none d-sm-block"></div>
         </div>
     </header>
-    <main>
-
+    <main id="app" class="container-fluid">
+        <div class="row">
+            <div class="col-lg-1 d-none d-sm-block"></div>
+            <div class="col-lg-10 col-sm-12">
+                <div class="row mb-4">
+                    <div class="col-lg-2 d-none d-sm-block"></div>
+                    <div class="col-lg-8 col-sm-12 rounded bg-primary">
+                        <h2 class="d-block text-center display-3">{{clock_header}}</h2>
+                        <h1 class="d-block text-center display-2">{{clock_time}}</h1>
+                    </div>
+                    <div class="col-lg-2 d-none d-sm-block"></div>
+                </div>
+                <template>
+                    <b-form class="row w-100">
+                        <div class="col-lg-4 col-sm-12 mb-3">
+                            <label for="num_sessions">Number of Sessions</label>
+                            <b-form-select 
+                            :options='set_up_timer.sessions_list'
+                            v-model = 'user_num_sessions'
+                            ></b-form-selected>
+                        </div>
+                        <div class="col-lg-4 col-sm-12 mb-3">
+                            <label for="session_min">Minutes per Session</label>
+                            <b-form-input 
+                            type = 'number'
+                            min = '0'
+                            max = '360'
+                            placeholder = 'How long do you want your studying session to be?'
+                            v-model= 'user_session_time'
+                            list = 'session_time'
+                            id = 'session_min'
+                            ></b-form-input>
+                            <b-form-datalist id="session_time" :options = 'set_up_timer.session_time_list'></b-form-datalist>
+                        </div>
+                        <div class="col-lg-4 col-sm-12 mb-3">
+                            <label for="break_min">Minutes per break</label>
+                            <b-form-input
+                            type = 'number'
+                            min = '0'
+                            max = '360'
+                            placeholder = 'How long do you want your break to be?'
+                            v-model = 'user_break_time'
+                            list = 'break_time'
+                            id = 'break_min'
+                            >
+                            </b-form-input>
+                            <b-form-datalist id="break_time" :options = 'set_up_timer.break_time_list'></b-form-datalist>
+                        </div>
+                        <div class="col-lg-2 col-sm-6">
+                            <b-button type='submit' variant='primary' size='md' class="w-100">Start!</b-button>
+                        </div>
+                        <div class="col-lg-2 col-sm-6">
+                            <b-button type='reset' variant='danger' size='md' class="w-100">Reset</b-button>
+                        </div>
+                    </b-form>
+                </template>
+                <template>
+                    <div class="row mt-3">
+                        <b-button class="col-lg-3 col-sm-12 w-100 bg-warning mt-2" size='lg'>{{control_timer.toggle_pause ? 'Pause' : 'Resume'}}</b-button>
+                        <div class="col-lg-1 d-none d-sm-block"></div>
+                        <b-button class="col-lg-3 col-sm-12 w-100 bg-danger mt-2" size='lg'>Reset</b-button>
+                        <div class="col-lg-1 d-none d-sm-block"></div>
+                        <b-button class="col-lg-3 col-sm-12 w-100 bg-primary mt-2" size='lg'>{{control_timer.toggle_break ? 'Skip to Break' : 'Skip to next Session'}}</b-button>
+                        <div class="col-lg-1 d-none d-sm-block"></div>
+                    </div>
+                </template>
+            </div>
+            <div class="col-lg-1 d-none d-sm-block"></div>
+        </div>
     </main>
     <script>
         let header = new Vue({
@@ -45,7 +112,22 @@
         let app = new Vue({
             el: '#app',
             data: {
-                
+                clock_header: 'hello',
+                clock_time: '00:00',
+                user_num_sessions:  1,
+                user_session_time: 30,
+                user_break_time: 5,
+                set_up_timer: {
+                    to_show: true,
+                    sessions_list: [1,2,3,4,5,6,7,8],
+                    session_time_list: [15, 20, 30, 45, 60, 120],
+                    break_time_list: [5, 10, 15, 30, 45, 60],
+                },
+                control_timer: {
+                    to_show: false,
+                    toggle_pause: true,
+                    toggle_break: true,
+                }
             },
         });
     </script>
