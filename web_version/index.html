@@ -39,13 +39,13 @@
                 <div class="row mb-4">
                     <div class="col-lg-2 d-none d-sm-block"></div>
                     <div class="col-lg-8 col-sm-12 rounded bg-primary">
-                        <h2 class="d-block text-center display-3">{{clock_header}}</h2>
-                        <h1 class="d-block text-center display-2">{{clock_time}}</h1>
+                        <h2 class="d-block text-center display-3">{{clock_header_show}}</h2>
+                        <h1 class="d-block text-center display-2">{{clock_time_show}}</h1>
                     </div>
                     <div class="col-lg-2 d-none d-sm-block"></div>
                 </div>
-                <template>
-                    <b-form class="row w-100">
+                <template v-if='set_up_timer.to_show'>
+                    <b-form class="row w-100" @submit.prevent='onSubmit'>
                         <div class="col-lg-4 col-sm-12 mb-3">
                             <label for="num_sessions">Number of Sessions</label>
                             <b-form-select 
@@ -88,7 +88,7 @@
                         </div>
                     </b-form>
                 </template>
-                <template>
+                <template v-if='control_timer.to_show'>
                     <div class="row mt-3">
                         <b-button class="col-lg-3 col-sm-12 w-100 bg-warning mt-2" size='lg'>{{control_timer.toggle_pause ? 'Pause' : 'Resume'}}</b-button>
                         <div class="col-lg-1 d-none d-sm-block"></div>
@@ -113,22 +113,85 @@
             el: '#app',
             data: {
                 clock_header: 'hello',
-                clock_time: '00:00',
+                // object for timer
+                timer_info: {
+                    minute: 0,
+                    seconds: 0,
+                    str_show: '00:00',
+                },
+                // user input vars initalised as defaults
                 user_num_sessions:  1,
                 user_session_time: 30,
                 user_break_time: 5,
+                // default values for timer
                 set_up_timer: {
                     to_show: true,
                     sessions_list: [1,2,3,4,5,6,7,8],
-                    session_time_list: [15, 20, 30, 45, 60, 120],
+                    session_time_list: [15, 20, 25, 30, 45, 60, 120],
                     break_time_list: [5, 10, 15, 30, 45, 60],
                 },
+                // to store the state of timer controllers
                 control_timer: {
                     to_show: false,
                     toggle_pause: true,
-                    toggle_break: true,
+                    check_next: false, // true -> go on to next phase
+                    toggle_session: true, // true -> session, false -> break
                 }
             },
+            computed: {
+                clock_header_show() {
+                    return this.clock_header; 
+                },
+                clock_time_show() {
+                    return this.timer_info.str_show;
+                }
+            },
+            methods: {
+                onSetUpSubmit(){
+                    this.setUpTimer(this.user_session_time);
+                },
+                setUpTimer(time_minute){
+                    this.timer_info.minute = time_minute;
+                    this.timer_info.str_show = `${time_minute}:00`;
+                },
+                countdownSecond(){
+                    let current_minute = this.timer_info.minute;
+                    let current_seconds = this.timer_info.seconds;
+                    // checking if current mode is done
+                    if(current_minute === 0){
+                        if(current_seconds === 0){
+                            this.check_next = true;
+                            this.toggle_session = !this.toggle_session;
+                            return
+                        }
+                    }
+                    if(current_seconds === 0){
+                        current_minute -= 1;
+                        current_seconds = 60;
+                    }
+                    // update timer
+                    current_seconds -= 1;
+                    let minute_str, second_str;
+                    if(current_minute < 10){
+                        minute_str = `0${current_minute}`;
+                    }
+                    else {
+                        minute_str = `${current_minute}`;
+                    }
+                    if(current_seconds < 10){
+                        second_str = `0${current_seconds}`;
+                    }
+                    else {
+                        second_str = `${current_seconds}`;
+                    }
+                    this.timer_info.minute = current_minute;
+                    this.timer_info.seconds = current_seconds;
+                    this.timer_info.str_show = `${minute_str}:${second_str}`;
+                },
+                startTimer(){
+                    
+                }
+            }
         });
     </script>
 </body>
