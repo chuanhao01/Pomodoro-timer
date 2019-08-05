@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link type="text/css" rel="stylesheet" href="../bootstrap-vue/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="../bootstrap-vue/bootstrap-vue.min.css">
+    <script src="../bootstrap-vue/vue.js"></script>
+    <script src="../bootstrap-vue/bootstrap-vue.min.js"></script>
+    <title>Pomodoro Timer</title>
+</head>
+<body class="bg-dark text-white">
+    <header class="container-fluid" id='header'>
+        <div class="row">
+            <div class="col-lg-1 d-none d-sm-block"></div>
+            <div class="col-lg-10 col-sm-12">
+                <b-navbar toggleable='md' type='dark' variant='dark'>
+                    <b-navbar-brand href='https://chuanhao01.github.com'>
+                        chuanhao01
+                    </b-navbar-brand>
+                    <b-navbar-toggle target='nav-collapse'></b-navbar-toggle>
+                    <b-collapse id='nav-collapse' is-nav>
+                        <b-navbar-nav class="ml-auto">
+                            <b-nav-item-dropdown text='Nothing :D' right>
+                            
+                            </b-nav-item-dropdown>
+                        </b-navbar-nav>
+                    </b-collapse>
+                </b-navbar>
+            </div>
+            <div class="col-lg-1 d-none d-sm-block"></div>
+        </div>
+    </header>
+    <main id="app" class="container-fluid">
+        <div class="row">
+            <div class="col-lg-1 d-none d-sm-block"></div>
+            <div class="col-lg-10 col-sm-12">
+                <div class="row mb-4">
+                    <div class="col-lg-2 d-none d-sm-block"></div>
+                    <div class="col-lg-8 col-sm-12 rounded bg-primary">
+                        <h2 class="d-block text-center display-3">{{clock_header_show}}</h2>
+                        <h1 class="d-block text-center display-2">{{clock_time_show}}</h1>
+                    </div>
+                    <div class="col-lg-2 d-none d-sm-block"></div>
+                </div>
+                <template v-if='set_up_timer.to_show'>
+                    <b-form class="row w-100" @submit.prevent='onSetUpSubmit' @reset.prevent='resetTimer'>
+                        <div class="col-lg-4 col-sm-12 mb-3">
+                            <label for="num_sessions">Number of Sessions</label>
+                            <b-form-select 
+                            :options='set_up_timer.sessions_list'
+                            v-model = 'user_num_sessions'
+                            ></b-form-selected>
+                        </div>
+                        <div class="col-lg-4 col-sm-12 mb-3">
+                            <label for="session_min">Minutes per Session</label>
+                            <b-form-input 
+                            type = 'number'
+                            min = '0'
+                            max = '360'
+                            placeholder = 'How long do you want your studying session to be?'
+                            v-model= 'user_session_time'
+                            list = 'session_time'
+                            id = 'session_min'
+                            ></b-form-input>
+                            <b-form-datalist id="session_time" :options = 'set_up_timer.session_time_list'></b-form-datalist>
+                        </div>
+                        <div class="col-lg-4 col-sm-12 mb-3">
+                            <label for="break_min">Minutes per break</label>
+                            <b-form-input
+                            type = 'number'
+                            min = '0'
+                            max = '360'
+                            placeholder = 'How long do you want your break to be?'
+                            v-model = 'user_break_time'
+                            list = 'break_time'
+                            id = 'break_min'
+                            >
+                            </b-form-input>
+                            <b-form-datalist id="break_time" :options = 'set_up_timer.break_time_list'></b-form-datalist>
+                        </div>
+                        <div class="col-lg-2 col-sm-6">
+                            <b-button type='submit' variant='primary' size='md' class="w-100">Start!</b-button>
+                        </div>
+                        <div class="col-lg-2 col-sm-6">
+                            <b-button type='reset' variant='danger' size='md' class="w-100">Reset</b-button>
+                        </div>
+                    </b-form>
+                </template>
+                <template v-if='control_timer.to_show'>
+                    <div class="row mt-3">
+                        <b-button 
+                        class="col-lg-3 col-sm-12 w-100 mt-2"
+                        size='lg'
+                        v-on:click.prevent = 'clickTogglePause'
+                        v-bind:class="{
+                            'bg-warning': !control_timer.toggle_pause,
+                            'bg-success': control_timer.toggle_pause,
+                        }"
+                        >{{control_timer.toggle_pause ? 'Resume' : 'Pause'}}</b-button>
+                        <div class="col-lg-1 d-none d-sm-block"></div>
+                        <b-button 
+                        class="col-lg-3 col-sm-12 w-100 bg-danger mt-2"
+                        size='lg'
+                        @click.prevent = 'onControlTimerReset'
+                        >Reset</b-button>
+                        <div class="col-lg-1 d-none d-sm-block"></div>
+                        <b-button class="col-lg-3 col-sm-12 w-100 bg-primary mt-2" size='lg' @click='onControlSkip'>{{control_timer.toggle_session ? 'Skip to Break' : 'Skip to next Session'}}</b-button>
+                        <div class="col-lg-1 d-none d-sm-block"></div>
+                    </div>
+                </template>
+            </div>
+            <div class="col-lg-1 d-none d-sm-block"></div>
+        </div>
+    </main>
+    <script>
+        // to do, simplify the code lel XD
+        let header = new Vue({
+            el: '#header',
+            data: {
+
+            },
+        });
+        let app = new Vue({
+            el: '#app',
+            data: {
+                clock_header: 'Please set up the timer',
+                // object for timer
+                timer_info: {
+                    minute: 0,
+                    seconds: 0,
+                    str_show: '00:00',
+                },
+                // user input vars initalised as defaults
+                user_num_sessions:  1,
+                user_session_time: 30,
+                user_break_time: 5,
+                current_session: 1,
+                // default values for timer
+                set_up_timer: {
+                    to_show: true,
+                    sessions_list: [1,2,3,4,5,6,7,8],
+                    session_time_list: [15, 20, 25, 30, 45, 60, 120],
+                    break_time_list: [5, 10, 15, 30, 45, 60],
+                },
+                // to store the state of timer controllers
+                control_timer: {
+                    to_show: false,
+                    toggle_pause: false,
+                    check_next: false, // true -> go on to next phase
+                    toggle_session: true, // true -> session, false -> break
+                }
+            },
+            computed: {
+                clock_header_show() {
+                    return this.clock_header; 
+                },
+                clock_time_show() {
+                    return this.timer_info.str_show;
+                }
+            },
+            methods: {
+                onSetUpSubmit(){
+                    // setting up the inital timer
+                    this.timer_info.minute = this.user_session_time;
+                    this.clock_header = `Session ${this.current_session}`;
+                    // update to show controller template
+                    this.set_up_timer.to_show = false;
+                    this.control_timer.to_show = true;
+                    // start the timer
+                    this.timer_var = setInterval(this.startTimer, 1000);
+                },
+                countdownSecond(){
+                    let current_minute = this.timer_info.minute;
+                    let current_seconds = this.timer_info.seconds;
+                    // checking if current mode is done
+                    if(current_minute === 0){
+                        if(current_seconds === 0){
+                            this.control_timer.check_next = true;
+                            this.control_timer.toggle_session = !this.control_timer.toggle_session;
+                            return
+                        }
+                    }
+                    if(current_seconds === 0){
+                        current_minute -= 1;
+                        current_seconds = 60;
+                    }
+                    // update timer
+                    current_seconds -= 1;
+                    let minute_str, second_str;
+                    if(current_minute < 10){
+                        minute_str = `0${current_minute}`;
+                    }
+                    else {
+                        minute_str = `${current_minute}`;
+                    }
+                    if(current_seconds < 10){
+                        second_str = `0${current_seconds}`;
+                    }
+                    else {
+                        second_str = `${current_seconds}`;
+                    }
+                    this.timer_info.minute = current_minute;
+                    this.timer_info.seconds = current_seconds;
+                    this.timer_info.str_show = `${minute_str}:${second_str}`;
+                },
+                startTimer(){
+                    if(this.control_timer.check_next === true){
+                        // if next is a session
+                        this.control_timer.check_next = false;
+                        if(this.control_timer.toggle_session){
+                            this.current_session += 1;
+                            this.clock_header = `Session ${this.current_session}`;
+                            this.timer_info.minute = this.user_session_time;
+                        }
+                        // if next is a break
+                        else{
+                            this.clock_header = 'Break';
+                            this.timer_info.minute = this.user_break_time;
+                        }
+                    }
+                    else{
+                        if(this.control_timer.toggle_pause === false){
+                        this.countdownSecond();
+                        }
+                        else{
+                            return;
+                        }
+                    }
+                    // check if all session are done
+                    if(this.current_session > this.user_num_sessions){
+                        this.set_up_timer.to_show = true;
+                        this.control_timer.to_show = false;
+                        this.timer_info.str_show = `00:00`;
+                        this.current_session = 1;
+                        this.clock_header = `Please set up the timer`;
+                        clearInterval(this.timer_var); 
+                    }
+                },
+                resetTimer(){
+                    this.user_num_sessions =  1,
+                    this.user_session_time = 30;
+                    this.user_break_time = 5;
+                    this.current_session = 1;
+                },
+                onControlTimerReset(){
+                    this.set_up_timer.to_show = true;
+                    this.control_timer.to_show = false;
+                    this.current_session = 1;
+                    this.clock_header = 'Please set up the timer'
+                    clearInterval(this.timer_var);
+                    this.timer_info = {
+                        minute: 0,
+                        seconds: 0,
+                        str_show: '00:00',
+                    }
+                },
+                clickTogglePause(){
+                    this.control_timer.toggle_pause = !this.control_timer.toggle_pause;
+                },
+                onControlSkip(){
+                    this.control_timer.check_next = true;
+                    this.timer_info.minute = 0;
+                    this.timer_info.seconds = 0;
+                    this.control_timer.toggle_session = !this.control_timer.toggle_session;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
