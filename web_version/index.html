@@ -45,7 +45,7 @@
                     <div class="col-lg-2 d-none d-sm-block"></div>
                 </div>
                 <template v-if='set_up_timer.to_show'>
-                    <b-form class="row w-100" @submit.prevent='onSubmit'>
+                    <b-form class="row w-100" @submit.prevent='onSetUpSubmit' @reset.prevent='resetTimer'>
                         <div class="col-lg-4 col-sm-12 mb-3">
                             <label for="num_sessions">Number of Sessions</label>
                             <b-form-select 
@@ -90,11 +90,23 @@
                 </template>
                 <template v-if='control_timer.to_show'>
                     <div class="row mt-3">
-                        <b-button class="col-lg-3 col-sm-12 w-100 bg-warning mt-2" size='lg'>{{control_timer.toggle_pause ? 'Pause' : 'Resume'}}</b-button>
+                        <b-button 
+                        class="col-lg-3 col-sm-12 w-100 mt-2"
+                        size='lg'
+                        v-on:click.prevent = 'clickTogglePause'
+                        v-bind:class="{
+                            'bg-warning': !control_timer.toggle_pause,
+                            'bg-success': control_timer.toggle_pause,
+                        }"
+                        >{{control_timer.toggle_pause ? 'Resume' : 'Pause'}}</b-button>
                         <div class="col-lg-1 d-none d-sm-block"></div>
-                        <b-button class="col-lg-3 col-sm-12 w-100 bg-danger mt-2" size='lg'>Reset</b-button>
+                        <b-button 
+                        class="col-lg-3 col-sm-12 w-100 bg-danger mt-2"
+                        size='lg'
+                        @click.prevent = 'onControlTimerReset'
+                        >Reset</b-button>
                         <div class="col-lg-1 d-none d-sm-block"></div>
-                        <b-button class="col-lg-3 col-sm-12 w-100 bg-primary mt-2" size='lg'>{{control_timer.toggle_break ? 'Skip to Break' : 'Skip to next Session'}}</b-button>
+                        <b-button class="col-lg-3 col-sm-12 w-100 bg-primary mt-2" size='lg' @click='onControlSkip'>{{control_timer.toggle_session ? 'Skip to Break' : 'Skip to next Session'}}</b-button>
                         <div class="col-lg-1 d-none d-sm-block"></div>
                     </div>
                 </template>
@@ -103,6 +115,7 @@
         </div>
     </main>
     <script>
+        // to do, simplify the code lel XD
         let header = new Vue({
             el: '#header',
             data: {
@@ -112,7 +125,7 @@
         let app = new Vue({
             el: '#app',
             data: {
-                clock_header: 'hello',
+                clock_header: 'Please set up the timer',
                 // object for timer
                 timer_info: {
                     minute: 0,
@@ -123,6 +136,7 @@
                 user_num_sessions:  1,
                 user_session_time: 30,
                 user_break_time: 5,
+                current_session: 1,
                 // default values for timer
                 set_up_timer: {
                     to_show: true,
@@ -133,7 +147,7 @@
                 // to store the state of timer controllers
                 control_timer: {
                     to_show: false,
-                    toggle_pause: true,
+                    toggle_pause: false,
                     check_next: false, // true -> go on to next phase
                     toggle_session: true, // true -> session, false -> break
                 }
@@ -148,11 +162,14 @@
             },
             methods: {
                 onSetUpSubmit(){
-                    this.setUpTimer(this.user_session_time);
-                },
-                setUpTimer(time_minute){
-                    this.timer_info.minute = time_minute;
-                    this.timer_info.str_show = `${time_minute}:00`;
+                    // setting up the inital timer
+                    this.timer_info.minute = this.user_session_time;
+                    this.clock_header = `Session ${this.current_session}`;
+                    // update to show controller template
+                    this.set_up_timer.to_show = false;
+                    this.control_timer.to_show = true;
+                    // start the timer
+                    this.timer_var = setInterval(this.startTimer, 1000);
                 },
                 countdownSecond(){
                     let current_minute = this.timer_info.minute;
@@ -160,8 +177,8 @@
                     // checking if current mode is done
                     if(current_minute === 0){
                         if(current_seconds === 0){
-                            this.check_next = true;
-                            this.toggle_session = !this.toggle_session;
+                            this.control_timer.check_next = true;
+                            this.control_timer.toggle_session = !this.control_timer.toggle_session;
                             return
                         }
                     }
@@ -189,7 +206,64 @@
                     this.timer_info.str_show = `${minute_str}:${second_str}`;
                 },
                 startTimer(){
-                    
+                    if(this.control_timer.check_next === true){
+                        // if next is a session
+                        this.control_timer.check_next = false;
+                        if(this.control_timer.toggle_session){
+                            this.current_session += 1;
+                            this.clock_header = `Session ${this.current_session}`;
+                            this.timer_info.minute = this.user_session_time;
+                        }
+                        // if next is a break
+                        else{
+                            this.clock_header = 'Break';
+                            this.timer_info.minute = this.user_break_time;
+                        }
+                    }
+                    else{
+                        if(this.control_timer.toggle_pause === false){
+                        this.countdownSecond();
+                        }
+                        else{
+                            return;
+                        }
+                    }
+                    // check if all session are done
+                    if(this.current_session > this.user_num_sessions){
+                        this.set_up_timer.to_show = true;
+                        this.control_timer.to_show = false;
+                        this.timer_info.str_show = `00:00`;
+                        this.current_session = 1;
+                        this.clock_header = `Please set up the timer`;
+                        clearInterval(this.timer_var); 
+                    }
+                },
+                resetTimer(){
+                    this.user_num_sessions =  1,
+                    this.user_session_time = 30;
+                    this.user_break_time = 5;
+                    this.current_session = 1;
+                },
+                onControlTimerReset(){
+                    this.set_up_timer.to_show = true;
+                    this.control_timer.to_show = false;
+                    this.current_session = 1;
+                    this.clock_header = 'Please set up the timer'
+                    clearInterval(this.timer_var);
+                    this.timer_info = {
+                        minute: 0,
+                        seconds: 0,
+                        str_show: '00:00',
+                    }
+                },
+                clickTogglePause(){
+                    this.control_timer.toggle_pause = !this.control_timer.toggle_pause;
+                },
+                onControlSkip(){
+                    this.control_timer.check_next = true;
+                    this.timer_info.minute = 0;
+                    this.timer_info.seconds = 0;
+                    this.control_timer.toggle_session = !this.control_timer.toggle_session;
                 }
             }
         });
